@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block title %}Delete Track{% endblock %}
+
+{% block content %}
+<h2>Are you sure you want to delete "{{ track.name }}"?</h2>
+<form id="delete-form" method="post" action="{% url 'track_delete' track.id %}">
+    {% csrf_token %}
+    <button type="submit">Yes, delete</button>
+    <a href="{% url 'tracks_list' %}">Cancel</a>
+</form>
+
+<script>
+document.getElementById('delete-form').addEventListener('submit', function(event) {
+    event.preventDefault();  // Prevent the default form submission
+
+    const form = event.target;
+    const formData = new FormData(form);
+
+    fetch(form.action, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',  // Indicate this is an AJAX request
+            'X-CSRFToken': formData.get('csrfmiddlewaretoken')  // Include CSRF token
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            window.location.href = "{% url 'tracks_list' %}";  // Redirect on success
+        } else {
+            alert(data.error || 'An error occurred');  // Display error message
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred');
+    });
+});
+</script>
+{% endblock %}

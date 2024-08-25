@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block title %}Add Track{% endblock %}
+
+{% block content %}
+    <h2>Add a New Track</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Save Track</button>
+    </form>
+{% endblock %}
